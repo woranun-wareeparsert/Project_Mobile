@@ -10,22 +10,28 @@ import {
 } from "react-native";
 import Axios from "axios";
 import { useState, useEffect } from "react";
+import CategoryGridTile from "../components/CategoryGridTile";
 
 
 const TravelScreen = ({ navigation, route }) => {
-    const { prev, Allsta } = route.params;
+    const { prev, Endstation } = route.params;
     const [direcpass, setdirecpass] = React.useState([]);
     const [check, setCheck] = React.useState(0);
 
     const getBtsDirect = () => {
         Axios.get("http://localhost:3000/travelBts").then((res) => {
             let myloop = [];
-            Allsta.forEach(function (item, index) {
-                res.data.forEach(function (item1, index) {
-                    if (item1.idbts == item.id) {
-                        myloop.push(item1);
-                    }
-                })
+            // Allsta.forEach(function (item, index) {
+            //     res.data.forEach(function (item1, index) {
+            //         if (item1.idbts == item.id) {
+            //             myloop.push(item1);
+            //         }
+            //     })
+            // })
+            res.data.forEach(function (item1, index) {
+                if (Endstation == item1.idbts) {
+                    myloop.push(item1);
+                }
             })
             setdirecpass(myloop);
             setCheck(1);
@@ -39,16 +45,28 @@ const TravelScreen = ({ navigation, route }) => {
             getBtsDirect()
         }
     })
+
     const renderCategories = (item) => {
-        return (<Text style={styles.text}>{item.item.tname}</Text>)
-    }
+        return (
+            <CategoryGridTile
+                style={styles.text}
+                title={item.item.tname}
+                color="#50586C"
+            // onSelect={() => {
+            //   navigation.navigate("CategoryMeals", {id: itemData.item.id, title: itemData.item.title});
+            // }}
+            />
+        );
+    };
+
     return (
         <View style={styles.screen}>
             <View style={styles.screentop}>
-                <FlatList style={styles.task} data={direcpass} renderItem={renderCategories} numColumns={1} />
+                <FlatList style={styles.task} data={direcpass} renderItem={renderCategories} numColumns={2} />
             </View>
             <Button
                 title="เส้นทางเพิ่มเติม"
+                color="#50586C"
                 onPress={() => {
                     navigation.navigate("Detail");
                 }}>Next Page</Button>
@@ -58,14 +76,14 @@ const TravelScreen = ({ navigation, route }) => {
 
 const styles = StyleSheet.create({
     screen: {
+        height: "100%",
         flex: 1,
-        justifyContent: "center",
         alignItems: "center",
         backgroundColor: "#DCE2F0",
         padding: 10,
     },
     screentop: {
-        backgroundColor: "#ACE2F0",
+        width: "100%",
         borderRadius: 10,
         padding: 10,
         flexDirection: "row",
@@ -75,8 +93,8 @@ const styles = StyleSheet.create({
         backgroundColor: "green",
         fontSize: 18,
     },
-    task:{
-        
+    task: {
+
     }
 
 });
