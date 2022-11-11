@@ -7,9 +7,14 @@ import {
   StyleSheet,
   TouchableOpacity,
   Platform,
+  Alert,
+  SafeAreaView,
+  ScrollView,
+  // Modal,
 } from "react-native";
 import Axios from "axios";
 import { useState, useEffect } from "react";
+import { Ionicons } from '@expo/vector-icons'
 
 
 const DirectionScreen = ({ navigation, route }) => {
@@ -19,6 +24,9 @@ const DirectionScreen = ({ navigation, route }) => {
   const [direcpass, setdirecpass] = React.useState([]);
   const [cost, setCost] = React.useState([]);
   const [stationAll, setstationAll] = React.useState([]);
+  var num = 0
+
+  // const [modalVisible, setModalVisible] = useState(true);
 
   const getBtsDirect = () => {
     Axios.get("http://localhost:3000/direcBts").then((res) => {
@@ -179,7 +187,7 @@ const DirectionScreen = ({ navigation, route }) => {
               }
             })
           }
-        } 
+        }
         else if (valend[0].sta_id > 24) {
           for (let i = 24; i <= valend[0].sta_id; i++) {
             res.data.forEach(function (item, index) {
@@ -198,35 +206,21 @@ const DirectionScreen = ({ navigation, route }) => {
         }
         setdirecpass(myloop);
       }
-      setstationAll(myloop);
+      // setstationAll(myloop);
+
       //คิดค่าโดยสาร BTS
-      if (myloop == 0) {
-        setCost(0)
-      }
-      else if (myloop.length == 2) {
-        setCost(16)
-      }
-      else if (myloop.length == 3) {
-        setCost(23)
-      }
-      else if (myloop.length == 4) {
-        setCost(26)
-      }
-      else if (myloop.length == 5) {
-        setCost(30)
-      }
-      else if (myloop.length == 6) {
-        setCost(33)
-      }
-      else if (myloop.length == 7) {
-        setCost(37)
-      }
-      else if (myloop.length == 8) {
-        setCost(40)
-      }
-      else {
-        setCost(44)
-      }
+      Axios.get("http://localhost:3000/costs").then((res) => {
+        let getCost = res.data.forEach(function (item) {
+          if (myloop.length == item.num_stat) {
+            console.log(item.num_stat)
+            console.log(item.cost)
+            setCost(item.cost);
+          }
+          else if (myloop.length > 9) {
+            setCost(44);
+          }
+        })
+      });
     }).catch((error) => {
       console.log("Api call error");
       alert(error.message);
@@ -237,46 +231,82 @@ const DirectionScreen = ({ navigation, route }) => {
       getBtsDirect()
     }
   })
+
   const renderCategories = (item) => {
-    return (<Text style={styles.text}>{item.item.sname}</Text>)
+    num++
+    if (start == item.item.id || end == item.item.id) {
+      return (<View style={styles.station}><Ionicons name="ellipsis-vertical" size={24} color={"black"} /><Text style={styles.text}>{item.item.sname}</Text></View>)
+    }
+    //  ต้องมีวิธีคิดอีกอันที่ ถ้าการแสดงผลชื่อสถานีมันเยอะก็จะให้มันแสดงเป็น ... แทนตรงระหว่างทาง
+    else {
+      return (<View style={styles.station}><Ionicons name="ellipsis-vertical" size={24} color={"black"} /><Text style={styles.text_ect}>{item.item.sname}</Text></View>)
+    }
   }
+
   return (
-    <View style={styles.screen}>
-      <View style={styles.screentop}>
-        <FlatList data={direcpass} renderItem={renderCategories} numColumns={1} />
-      </View>
-      <Text>Direction Screen</Text>
-      <Text>ราคาค่าโดยสาร : {cost}</Text>
-      <Button
-        title="เส้นทางเพิ่มเติม"
-        onPress={() => {
-          navigation.navigate("Travel", { prev: "pathBts", Allsta: stationAll})
-        }}>Next Page</Button>
-    </View>
+    <SafeAreaView style={styles.container}>
+      <ScrollView>
+        <View style={styles.screen}>
+          <View style={styles.screentop}>
+            <Ionicons name="bus" size={24} color={"black"} />
+            <FlatList data={direcpass} renderItem={renderCategories} numColumns={1} />
+            <Ionicons name="bus" size={24} color={"black"} />
+          </View>
+          <Text style={styles.txt}>ราคาค่าโดยสาร :
+            <Text style={styles.text_cost}> {cost} ฿</Text></Text>
+          <Button
+            title="สถานที่ท่องเที่ยว"
+            color="#50586C"
+            onPress={() => {
+              navigation.navigate("Travel", { prev: "pathBts", Endstation: end });
+            }} />
+          
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   )
 }
 
 const styles = StyleSheet.create({
+  container: {
+    height: "100%",
+    flex: 1,
+    backgroundColor: "#DCE2F0",
+  },
   screen: {
     flex: 1,
-    justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#DCE2F0",
     padding: 10,
+    marginVertical: "5%",
+  },
+  station: {
+    marginBottom: 5,
+    flexDirection: "row",
   },
   screentop: {
     width: "80%",
-    height: "50%",
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#ACE2F0",
+    backgroundColor: "white",
     borderRadius: 10,
     padding: 10,
   },
   text: {
-    backgroundColor: "green",
+    marginLeft: 15,
     fontSize: 18,
-  }
+    fontWeight: "bold"
+  },
+  text_ect: {
+    marginLeft: 15,
+    fontSize: 18,
+  },
+  txt: {
+    margin: 20,
+    fontSize: 20,
+  },
+  text_cost: {
+    fontSize: 30,
+    fontWeight: "bold"
+  },
 
 });
 
