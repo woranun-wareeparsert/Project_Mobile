@@ -18,6 +18,7 @@ const DirectionScreen = ({ navigation, route }) => {
   const [check, setCheck] = React.useState(0);
   const [direcpass, setdirecpass] = React.useState([]);
   const [cost, setCost] = React.useState([]);
+  const [stationAll, setstationAll] = React.useState([]);
 
   const getBtsDirect = () => {
     Axios.get("http://localhost:3000/direcBts").then((res) => {
@@ -197,7 +198,7 @@ const DirectionScreen = ({ navigation, route }) => {
         }
         setdirecpass(myloop);
       }
-
+      setstationAll(myloop);
       //คิดค่าโดยสาร BTS
       if (myloop == 0) {
         setCost(0)
@@ -247,9 +248,9 @@ const DirectionScreen = ({ navigation, route }) => {
       <Text>Direction Screen</Text>
       <Text>ราคาค่าโดยสาร : {cost}</Text>
       <Button
-        title="สถานที่ท่องเที่ยว"
+        title="เส้นทางเพิ่มเติม"
         onPress={() => {
-          navigation.navigate("Detail");
+          navigation.navigate("Travel", { prev: "pathBts", Allsta: stationAll})
         }}>Next Page</Button>
     </View>
   )
