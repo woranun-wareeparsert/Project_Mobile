@@ -22,7 +22,8 @@ const SearchScreen = ({ navigation, route }) => {
   const [endStation, onChangeendStation] = React.useState("");
   const [Bts, setBts] = React.useState([]);
   const [check, setCheck] = React.useState(0);
-  const [checkstation, setCheckstation] = React.useState("");
+  // const [checkstation, setCheckstation] = React.useState("");
+  var checkstation = ""
 
   const getBts = () => {
     if (checkstation == "BTS" || checkstation == "") {
@@ -37,7 +38,7 @@ const SearchScreen = ({ navigation, route }) => {
         alert(error.message);
       });
     }
-    else if(checkstation == "MRT"){
+    else if (checkstation == "MRT") {
       Axios.get("http://localhost:3000/mrt").then((res) => {
         let newArray = res.data.map((item) => {
           return { key: item.id, value: item.tname }
@@ -58,41 +59,47 @@ const SearchScreen = ({ navigation, route }) => {
   })
   return (
     <View style={styles.screen}>
+
       <View style={styles.screenbtn}>
         <Button
-          style={styles.btn}
           title="BTS"
+          color="#50586C"
           onPress={() => {
-            setCheckstation("BTS")
+            // setCheckstation("BTS")
+            checkstation = "BTS"
             getBts()
-          }}
-        />
+          }} />
         <View style={styles.space} />
         <Button
-          style={styles.btn}
           title="MRT"
+          color="#50586C"
           onPress={() => {
-            setCheckstation("MRT")
+            // setCheckstation("MRT")
+            checkstation = "MRT"
             getBts()
-          }}
-        />
+          }} />
       </View>
-      <Text>สถานีเริ่มต้น</Text>
-      <SelectList setSelected={setSelectedstart} data={Bts} onSelect={() => alert(selectedstart)} placeholder="เลือกสถานีเริ่มต้น" />
-      <View style={styles.space1} />
-      <Text>สถานี/สถานที่ปลายทาง</Text>
-      <SelectList setSelected={setSelectedend} data={Bts} onSelect={() => alert(selectedend)} placeholder="เลือกสถานีปลายทาง" />
-      <View style={styles.space1} />
-      <Button
-        title="ค้นหา"
-        onPress={() => {
-          if (selectedstart == "" || selectedend == "") {
-            alert("กรุณาระบุสถานี")
-          }
-          else {
-            navigation.navigate("Direction", { prev: "pathBts", start: selectedstart, end: selectedend })
-          }
-        }} />
+
+
+      <View style={styles.inscreen}>
+        <Text style={styles.text}>สถานีเริ่มต้น</Text>
+        <SelectList setSelected={setSelectedstart} data={Bts} onSelect={() => console.log(selectedstart)} placeholder="เลือกสถานีเริ่มต้น" />
+        <Text style={styles.text}>สถานี/สถานที่ปลายทาง</Text>
+        <SelectList setSelected={setSelectedend} data={Bts} onSelect={() => console.log(selectedend)} placeholder="เลือกสถานีปลายทาง" />
+        <View style={styles.btn}>
+          <Button
+            title="ค้นหา"
+            color="#50586C"
+            onPress={() => {
+              // if (selectedstart == "" || selectedend == "") {
+              //   alert("กรุณาระบุสถานี")
+              // }
+              // else {
+              navigation.navigate("Direction", { prev: "pathBts", start: selectedstart, end: selectedend })
+              // }
+            }} />
+        </View>
+      </View>
     </View>
   )
 };
@@ -104,15 +111,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#DCE2F0",
   },
-  input: {
-    height: 40,
-    margin: 12,
-    borderWidth: 1,
-    padding: 10,
-    backgroundColor: "#50586C",
-    color: "#DCE2F0",
-    borderRadius: "5px",
-  },
   screenbtn: {
     flexDirection: "row",
     flexWrap: "wrap",
@@ -122,9 +120,19 @@ const styles = StyleSheet.create({
     width: 30, // or whatever size you need
     height: 30,
   },
-  space1: {
-    height: 20,
+  inscreen: {
+    height: "50%",
+    minWidth: "65%",
+    maxWidth: "90%",
+    // backgroundColor: "white",
   },
+  text: {
+    marginVertical: 20,
+    marginBottom: 10,
+  },
+  btn: {
+    marginVertical: 20,
+  }
 
 });
 
