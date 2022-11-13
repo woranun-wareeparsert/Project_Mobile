@@ -8,18 +8,25 @@ import {
   TouchableOpacity,
   Platform,
 } from "react-native";
+import { longdo, map, LongdoMap } from "../components/Longdo";
 
 const PlaceDetailScreen = ({ navigation }) => {
-    return (
-      <View style={styles.screen}>
-        <Text>Palce Detail Screen</Text>
-        <Button 
+  const initMap = () => {
+    map.Layers.setBase(longdo.Layers.GRAY);
+  }
+  const mapKey = '718724d3e36dd8a8a83c4cb47654b1de'
+  return (
+    <View style={styles.screen}>
+      {/* <Text>Palce Detail Screen</Text>
+      <Button
         title="หน้าแรก"
+        color="#50586C"
         onPress={() => {
           navigation.popToTop();
-        }}>Next Page</Button>
-      </View>
-    )
+        }}>Next Page</Button> */}
+        <LongdoMap id="longdo-map" mapKey={mapKey} callback={initMap} />
+    </View>
+  )
 }
 
 const styles = StyleSheet.create({
@@ -27,7 +34,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#DCE2F0"
+    backgroundColor: "#DCE2F0",
   },
 
 });
