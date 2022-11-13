@@ -18,33 +18,87 @@ import { useState, useEffect } from "react";
 const SearchScreen = ({ navigation, route }) => {
   const [selectedstart, setSelectedstart] = React.useState("");
   const [selectedend, setSelectedend] = React.useState("");
-  const [startStaion, onChangestartStaion] = React.useState("");
-  const [endStation, onChangeendStation] = React.useState("");
-  const [Bts, setBts] = React.useState([]);
-  const [check, setCheck] = React.useState(0);
-  // const [checkstation, setCheckstation] = React.useState("");
-  var checkstation = ""
 
-  const getBts = () => {
-    if (checkstation == "BTS" || checkstation == "") {
+  const [startStation, setstartStation] = React.useState([]);
+  const [endStation, setendStation] = React.useState([]);
+
+  // const [Bts, setBts] = React.useState([]);
+  const [check, setCheck] = React.useState(0);
+  const [checkstation, setCheckstation] = React.useState("");
+  const [checkendstation, setCheckendstation] = React.useState("");
+  // let checkstation = ""
+  // var checkendstation = ""
+
+  const getBts = (checkstation, checkendstation) => {
+    if ((checkstation == "BTS" ) && checkendstation == "location") {
+      //Start Station
       Axios.get("http://localhost:3000/bts").then((res) => {
         let newArray = res.data.map((item) => {
           return { key: item.id, value: item.sname }
         })
         console.log("BTS")
-        setBts(newArray);
+        setstartStation(newArray);
+      }).catch((error) => {
+        console.log("Api call error");
+        alert(error.message);
+      });
+      //End Station
+      Axios.get("http://localhost:3000/travelBts").then((res) => {
+        let newArray = res.data.map((item) => {
+          return { key: item.idbts, value: item.tname }
+        })
+        console.log("location")
+        setendStation(newArray);
       }).catch((error) => {
         console.log("Api call error");
         alert(error.message);
       });
     }
-    else if (checkstation == "MRT") {
+    else if (checkstation == "MRT" && checkendstation == "location") {
+      //Start Station
       Axios.get("http://localhost:3000/mrt").then((res) => {
         let newArray = res.data.map((item) => {
           return { key: item.id, value: item.tname }
         })
         console.log("MRT")
-        setBts(newArray);
+        setstartStation(newArray);
+      }).catch((error) => {
+        console.log("Api call error");
+        alert(error.message);
+      });
+      //End Station
+      Axios.get("http://localhost:3000/travelBts").then((res) => {
+        let newArray = res.data.map((item) => {
+          return { key: item.idbts, value: item.tname }
+        })
+        console.log("location")
+        setendStation(newArray);
+      }).catch((error) => {
+        console.log("Api call error");
+        alert(error.message);
+      });
+    }
+    else if ((checkstation == "BTS" || checkstation == "") && checkendstation == "") {
+      Axios.get("http://localhost:3000/bts").then((res) => {
+        let newArray = res.data.map((item) => {
+          return { key: item.id, value: item.sname }
+        })
+        console.log("BTS")
+        setstartStation(newArray);
+        setendStation(newArray);
+      }).catch((error) => {
+        console.log("Api call error");
+        alert(error.message);
+      });
+    }
+    else if (checkstation == "MRT" && checkendstation == "") {
+      Axios.get("http://localhost:3000/mrt").then((res) => {
+        let newArray = res.data.map((item) => {
+          return { key: item.id, value: item.tname }
+        })
+        console.log("MRT")
+        setstartStation(newArray);
+        setendStation(newArray);
       }).catch((error) => {
         console.log("Api call error");
         alert(error.message);
@@ -54,9 +108,9 @@ const SearchScreen = ({ navigation, route }) => {
   }
   useEffect(() => {
     if (check == 0) {
-      getBts()
+      getBts(checkstation, checkendstation)
     }
-  })
+  }, [getBts]);
   return (
     <View style={styles.screen}>
 
@@ -65,27 +119,40 @@ const SearchScreen = ({ navigation, route }) => {
           title="BTS"
           color="#50586C"
           onPress={() => {
-            // setCheckstation("BTS")
-            checkstation = "BTS"
-            getBts()
+            setCheckstation("BTS")
+            setCheckendstation("")
+            // checkstation = "BTS"
+            // checkendstation = ""
+            getBts(checkstation, checkendstation)
           }} />
-        <View style={styles.space} />
         <Button
           title="MRT"
           color="#50586C"
           onPress={() => {
-            // setCheckstation("MRT")
-            checkstation = "MRT"
-            getBts()
+            setCheckstation("MRT")
+            setCheckendstation("")
+            // checkstation = "MRT"
+            // checkendstation = ""
+            getBts(checkstation, checkendstation)
+          }} />
+        <Button
+          title="location"
+          color="#50586C"
+          onPress={() => {
+            setCheckstation(checkstation)
+            setCheckendstation("location")
+            // checkstation = checkstation
+            // checkendstation = "location"
+            getBts(checkstation, checkendstation)
           }} />
       </View>
 
 
       <View style={styles.inscreen}>
         <Text style={styles.text}>สถานีเริ่มต้น</Text>
-        <SelectList setSelected={setSelectedstart} data={Bts} onSelect={() => console.log(selectedstart)} placeholder="เลือกสถานีเริ่มต้น" />
+        <SelectList setSelected={setSelectedstart} data={startStation} onSelect={() => console.log(selectedstart)} placeholder="เลือกสถานีเริ่มต้น" />
         <Text style={styles.text}>สถานี/สถานที่ปลายทาง</Text>
-        <SelectList setSelected={setSelectedend} data={Bts} onSelect={() => console.log(selectedend)} placeholder="เลือกสถานีปลายทาง" />
+        <SelectList setSelected={setSelectedend} data={endStation} onSelect={() => console.log(selectedend)} placeholder="เลือกสถานีปลายทาง" />
         <View style={styles.btn}>
           <Button
             title="ค้นหา"
@@ -112,9 +179,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#DCE2F0",
   },
   screenbtn: {
+    width: "80%",
     flexDirection: "row",
     flexWrap: "wrap",
     padding: 10,
+    justifyContent: "space-around"
   },
   space: {
     width: 30, // or whatever size you need
