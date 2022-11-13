@@ -7,6 +7,9 @@ import {
     StyleSheet,
     TouchableOpacity,
     Platform,
+    Pressable,
+    Modal,
+    Alert
 } from "react-native";
 import Axios from "axios";
 import { useState, useEffect } from "react";
@@ -17,6 +20,11 @@ const TravelScreen = ({ navigation, route }) => {
     const { prev, Endstation } = route.params;
     const [direcpass, setdirecpass] = React.useState([]);
     const [check, setCheck] = React.useState(0);
+
+    //open-close Modal
+    const [visible, setVisible] = React.useState(false);
+    const showModal = () => setVisible(true);
+    const hideModal = () => setVisible(false);
 
     const getBtsDirect = () => {
         Axios.get("http://localhost:3000/travelBts").then((res) => {
@@ -52,15 +60,27 @@ const TravelScreen = ({ navigation, route }) => {
                 style={styles.text}
                 title={item.item.tname}
                 color="#50586C"
-            // onSelect={() => {
-            //   navigation.navigate("CategoryMeals", {id: itemData.item.id, title: itemData.item.title});
-            // }}
+                onPress={showModal}
             />
         );
     };
 
     return (
         <View style={styles.screen}>
+            <Modal animationType="fade" transparent={true} visible={visible} onDismiss={hideModal}>
+                <View style={styles.centeredView}>
+                    <View style={styles.modalView}>
+                        <Text style={styles.modalText}>Hello World!</Text>
+                        <Pressable
+                            style={[styles.button, styles.buttonClose]}
+                            onPress={hideModal}
+                        >
+                            <Text style={styles.textStyle}>Hide Modal</Text>
+                        </Pressable>
+                    </View>
+                </View>
+            </Modal>
+
             <View style={styles.screentop}>
                 <FlatList style={styles.task} data={direcpass} renderItem={renderCategories} numColumns={2} />
             </View>
@@ -93,8 +113,49 @@ const styles = StyleSheet.create({
         backgroundColor: "green",
         fontSize: 18,
     },
-    task: {
 
+
+    centeredView: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        marginTop: 22,
+        backgroundColor: "rgba(80, 88, 108,.5)",
+    },
+    modalView: {
+        margin: 20,
+        backgroundColor: "white",
+        borderRadius: 20,
+        padding: 35,
+        alignItems: "center",
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5
+    },
+    button: {
+        borderRadius: 20,
+        padding: 10,
+        elevation: 2
+    },
+    buttonOpen: {
+        backgroundColor: "#F194FF",
+    },
+    buttonClose: {
+        backgroundColor: "#2196F3",
+    },
+    textStyle: {
+        color: "white",
+        fontWeight: "bold",
+        textAlign: "center"
+    },
+    modalText: {
+        marginBottom: 15,
+        textAlign: "center"
     }
 
 });
