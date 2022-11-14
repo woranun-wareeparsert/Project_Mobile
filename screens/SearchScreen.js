@@ -19,98 +19,73 @@ const SearchScreen = ({ navigation, route }) => {
   const [selectedstart, setSelectedstart] = React.useState("");
   const [selectedend, setSelectedend] = React.useState("");
 
-  const [startStation, setstartStation] = React.useState([]);
-  const [endStation, setendStation] = React.useState([]);
+  const [Bts, setBts] = React.useState([]);
+  const [Locations, setLocations] = React.useState([]);
 
-  // const [Bts, setBts] = React.useState([]);
   const [check, setCheck] = React.useState(0);
-  const [checkstation, setCheckstation] = React.useState("");
-  const [checkendstation, setCheckendstation] = React.useState("");
-  // let checkstation = ""
-  // var checkendstation = ""
+  const [checkstations, setCheckstations] = React.useState("BTS");
+  const [checkstationsend, setCheckstationsend] = React.useState("");
 
-  const getBts = (checkstation, checkendstation) => {
-    if ((checkstation == "BTS" ) && checkendstation == "location") {
-      //Start Station
+  var checkstation = ""
+  var checkstationend = ""
+
+  const getBts = () => {
+    //เริ่มมากดเลือก BTS เลย
+    if (checkstation == "BTS" || checkstation == "" && checkstationend == "BTS" || checkstationend == "") {
       Axios.get("http://localhost:3000/bts").then((res) => {
         let newArray = res.data.map((item) => {
           return { key: item.id, value: item.sname }
         })
         console.log("BTS")
-        setstartStation(newArray);
-      }).catch((error) => {
-        console.log("Api call error");
-        alert(error.message);
-      });
-      //End Station
-      Axios.get("http://localhost:3000/travelBts").then((res) => {
-        let newArray = res.data.map((item) => {
-          return { key: item.idbts, value: item.tname }
-        })
-        console.log("location")
-        setendStation(newArray);
+        setBts(newArray);
+        setLocations(newArray);
       }).catch((error) => {
         console.log("Api call error");
         alert(error.message);
       });
     }
-    else if (checkstation == "MRT" && checkendstation == "location") {
-      //Start Station
-      Axios.get("http://localhost:3000/mrt").then((res) => {
-        let newArray = res.data.map((item) => {
-          return { key: item.id, value: item.tname }
-        })
-        console.log("MRT")
-        setstartStation(newArray);
-      }).catch((error) => {
-        console.log("Api call error");
-        alert(error.message);
-      });
-      //End Station
-      Axios.get("http://localhost:3000/travelBts").then((res) => {
-        let newArray = res.data.map((item) => {
-          return { key: item.idbts, value: item.tname }
-        })
-        console.log("location")
-        setendStation(newArray);
-      }).catch((error) => {
-        console.log("Api call error");
-        alert(error.message);
-      });
-    }
-    else if ((checkstation == "BTS" || checkstation == "") && checkendstation == "") {
+    //BTS แล้วเลือก Location
+    else if (checkstation == "BTS" || checkstation == "" && checkstationend == "LOCATION") {
       Axios.get("http://localhost:3000/bts").then((res) => {
         let newArray = res.data.map((item) => {
           return { key: item.id, value: item.sname }
         })
-        console.log("BTS")
-        setstartStation(newArray);
-        setendStation(newArray);
+        setBts(newArray);
       }).catch((error) => {
         console.log("Api call error");
         alert(error.message);
       });
-    }
-    else if (checkstation == "MRT" && checkendstation == "") {
-      Axios.get("http://localhost:3000/mrt").then((res) => {
+      Axios.get("http://localhost:3000/travelBts").then((res) => {
         let newArray = res.data.map((item) => {
           return { key: item.id, value: item.tname }
         })
-        console.log("MRT")
-        setstartStation(newArray);
-        setendStation(newArray);
+        setLocations(newArray);
       }).catch((error) => {
         console.log("Api call error");
         alert(error.message);
       });
     }
+    else if (checkstation == "MRT") {
+      Axios.get("http://localhost:3000/mrt").then((res) => {
+        let newArray = res.data.map((item) => {
+          return { key: item.id, value: item.sname }
+        })
+        console.log("MRT")
+        setBts(newArray);
+        setLocations(newArray);
+      }).catch((error) => {
+        console.log("Api call error");
+        alert(error.message);
+      });
+    }
+    //ยังไม่ทำ mrt เพราะยังไม่มีสถานที่ท่องเที่ยวของ mrt
     setCheck(1);
   }
   useEffect(() => {
     if (check == 0) {
-      getBts(checkstation, checkendstation)
+      getBts()
     }
-  }, [getBts]);
+  })
   return (
     <View style={styles.screen}>
 
@@ -119,40 +94,40 @@ const SearchScreen = ({ navigation, route }) => {
           title="BTS"
           color="#50586C"
           onPress={() => {
-            setCheckstation("BTS")
-            setCheckendstation("")
-            // checkstation = "BTS"
-            // checkendstation = ""
-            getBts(checkstation, checkendstation)
+            checkstation = "BTS"
+            checkstationend = "BTS"
+            setCheckstations("BTS")
+            setCheckstationsend("BTS")
+            getBts()
           }} />
+        <View style={styles.space} />
         <Button
           title="MRT"
           color="#50586C"
           onPress={() => {
-            setCheckstation("MRT")
-            setCheckendstation("")
-            // checkstation = "MRT"
-            // checkendstation = ""
-            getBts(checkstation, checkendstation)
+            checkstation = "MRT"
+            checkstationend = "MRT"
+            setCheckstations("MRT")
+            setCheckstationsend("MRT")
+            getBts()
           }} />
+        <View style={styles.space} />
         <Button
-          title="location"
+          title="Location"
           color="#50586C"
           onPress={() => {
-            setCheckstation(checkstation)
-            setCheckendstation("location")
-            // checkstation = checkstation
-            // checkendstation = "location"
-            getBts(checkstation, checkendstation)
+            checkstationend = "LOCATION"
+            setCheckstationsend("LOCATION")
+            getBts()
           }} />
       </View>
 
 
       <View style={styles.inscreen}>
         <Text style={styles.text}>สถานีเริ่มต้น</Text>
-        <SelectList setSelected={setSelectedstart} data={startStation} onSelect={() => console.log(selectedstart)} placeholder="เลือกสถานีเริ่มต้น" />
+        <SelectList setSelected={setSelectedstart} data={Bts} onSelect={() => console.log(selectedstart)} placeholder="เลือกสถานีเริ่มต้น" />
         <Text style={styles.text}>สถานี/สถานที่ปลายทาง</Text>
-        <SelectList setSelected={setSelectedend} data={endStation} onSelect={() => console.log(selectedend)} placeholder="เลือกสถานีปลายทาง" />
+        <SelectList setSelected={setSelectedend} data={Locations} onSelect={() => console.log(selectedend)} placeholder="เลือกสถานีปลายทาง" />
         <View style={styles.btn}>
           <Button
             title="ค้นหา"
@@ -162,7 +137,7 @@ const SearchScreen = ({ navigation, route }) => {
               //   alert("กรุณาระบุสถานี")
               // }
               // else {
-              navigation.navigate("Direction", { prev: "pathBts", start: selectedstart, end: selectedend })
+              navigation.navigate("Direction", { prev: "pathBts", start: selectedstart, end: selectedend, checkSTA: checkstations, checkSTAEnd: checkstationsend })
               // }
             }} />
         </View>
@@ -179,11 +154,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#DCE2F0",
   },
   screenbtn: {
-    width: "80%",
     flexDirection: "row",
     flexWrap: "wrap",
     padding: 10,
-    justifyContent: "space-around"
   },
   space: {
     width: 30, // or whatever size you need
