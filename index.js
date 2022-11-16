@@ -9,8 +9,8 @@ app.use(express.json());
 const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: '0996286167Earth',
-    database: 'projectmobile',
+    password: '159PooK159.',
+    database: 'project_mobile',
 })
 app.get('/bts', (req, res) => {
     db.query("SELECT * FROM station_bts where id != 49", (err, result) => {
@@ -41,6 +41,24 @@ app.get('/direcBts', (req, res) => {
 });
 app.get('/travelBts', (req, res) => {
     db.query("SELECT * FROM travel", (err, result) => {
+        if (err) {
+            console.log(err)
+        } else {
+            res.json(result);
+        }
+    })
+});
+app.get('/costs', (req, res) => {
+    db.query("SELECT * FROM costs", (err, result) => {
+        if (err) {
+            console.log(err)
+        } else {
+            res.json(result);
+        }
+    })
+});
+app.get('/img_travel', (req, res) => {
+    db.query("SELECT * FROM img_travel", (err, result) => {
         if (err) {
             console.log(err)
         } else {
