@@ -23,6 +23,8 @@ const DirectionScreen = ({ navigation, route }) => {
   const [check, setCheck] = React.useState(0);
   const [direcpass, setdirecpass] = React.useState([]);
   const [cost, setCost] = React.useState([]);
+  const [cost3, setCost3] = React.useState("");
+  const [cost4, setCost4] = React.useState("");
   const [stationAll, setstationAll] = React.useState([]);
   var num = 0
 
@@ -222,6 +224,238 @@ const DirectionScreen = ({ navigation, route }) => {
             }
           })
         });
+      }).catch((error) => {
+        console.log("Api call error");
+        alert(error.message);
+      });
+    }
+    else if (checkSTA == "BTS" && checkSTAEnd == "MRT") {
+      Axios.get("http://localhost:3000/direcBts").then((res) => {
+        let valstart = res.data.filter((val) => {
+          return val.id == start
+        })
+        let myloop = [];
+        let myloop1 = [];
+        let myloop2 = [];
+        if (valstart[0].id < 17 && valstart[0].type == "sukhumvit") {
+          for (let i = valstart[0].id; i < 17; i++) {
+            res.data.forEach(function (item, index) {
+              if (item.id == i) {
+                myloop.push(item);
+                myloop1.push(item);
+              }
+            })
+          }
+        } else if (valstart[0].id > 27 && valstart[0].type == "sukhumvit") {
+          for (let i = valstart[0].id; i > 27; i--) {
+            res.data.forEach(function (item, index) {
+              if (item.id == i) {
+                myloop.push(item);
+                myloop1.push(item);
+              }
+            })
+          }
+        } else if (valstart[0].id >= 48 && valstart[0].id <= 55 && valstart[0].type == "silom") {
+          if (valstart[0].id >= 48 && valstart[0].id <= 51) {
+            for (let i = valstart[0].id; i <= 51; i++) {
+              res.data.forEach(function (item, index) {
+                if (item.id == i) {
+                  myloop.push(item);
+                  myloop1.push(item);
+                }
+              })
+            }
+          }
+        }
+        Axios.get("http://localhost:3000/mrt").then((res) => {
+          let valend = res.data.filter((val) => {
+            return val.id == end
+          })
+          //sukhumvit ไป mrt N9
+          if (valstart[0].id < 17 && valstart[0].type == "sukhumvit") {
+            if (valstart[0].id < 17 && valend[0].id > 73 && valend[0].id < 90 && valstart[0].type == "sukhumvit") {
+              for (let i = 74; i <= valend[0].id; i++) {
+                res.data.forEach(function (item, index) {
+                  if (item.id == i) {
+                    myloop.push(item);
+                    myloop2.push(item);
+                  }
+                })
+              }
+              setdirecpass(myloop);
+            } else if (valstart[0].id < 17 && valend[0].id < 74 || valend[0].id >= 90 && valstart[0].type == "sukhumvit") {
+              if (valend[0].id < 74) {
+                for (let i = 74; i >= valend[0].id; i--) {
+                  res.data.forEach(function (item, index) {
+                    if (item.id == i) {
+                      myloop.push(item);
+                    }
+                  })
+                }
+                setdirecpass(myloop);
+              } else if (valend[0].id == 93) {
+                for (let i = 74; i >= 62; i--) {
+                  res.data.forEach(function (item, index) {
+                    if (item.id == i) {
+                      myloop.push(item);
+                    }
+                  })
+                }
+                res.data.forEach(function (item, index) {
+                  if (item.id == 93) {
+                    myloop.push(item);
+                  }
+                })
+                setdirecpass(myloop);
+              } else if (valend[0].id < 93 && valend[0].id >= 90) {
+                for (let i = 74; i >= 62; i--) {
+                  res.data.forEach(function (item, index) {
+                    if (item.id == i) {
+                      myloop.push(item);
+                    }
+                  })
+                }
+                for (let i = 93; i >= valend[0].id; i--) {
+                  res.data.forEach(function (item, index) {
+                    if (item.id == i) {
+                      myloop.push(item);
+                    }
+                  })
+                }
+                setdirecpass(myloop);
+              } else if (valend[0].id > 93 && valend[0].id <= 99) {
+                for (let i = 74; i >= 62; i--) {
+                  res.data.forEach(function (item, index) {
+                    if (item.id == i) {
+                      myloop.push(item);
+                    }
+                  })
+                }
+                for (let i = 93; i <= valend[0].id; i++) {
+                  res.data.forEach(function (item, index) {
+                    if (item.id == i) {
+                      myloop.push(item);
+                    }
+                  })
+                }
+                setdirecpass(myloop);
+              }
+            }
+          }
+          //sukhumvit ไป mrt E4
+          else if (valstart[0].id > 27 && valstart[0].type == "sukhumvit") {
+            if (valstart[0].id > 27 && valend[0].id > 65 && valend[0].id < 83 && valstart[0].type == "sukhumvit") {
+              for (let i = 82; i >= valend[0].id; i--) {
+                res.data.forEach(function (item, index) {
+                  if (item.id == i) {
+                    myloop.push(item);
+                    myloop2.push(item);
+                  }
+                })
+              }
+              setdirecpass(myloop);
+            } else if (valstart[0].id > 27 && valend[0].id <= 65 || valend[0].id <= 99 && valstart[0].type == "sukhumvit") {
+              if (valend[0].id <= 65) {
+                for (let i = 82; i <= 93; i++) {
+                  res.data.forEach(function (item, index) {
+                    if (item.id == i) {
+                      myloop.push(item);
+                      myloop2.push(item);
+                    }
+                  })
+                }
+                for (let i = 62; i <= valend[0].id; i++) {
+                  res.data.forEach(function (item, index) {
+                    if (item.id == i) {
+                      myloop.push(item);
+                      myloop2.push(item);
+                    }
+                  })
+                }
+                setdirecpass(myloop);
+              }
+              else if (valend[0].id <= 99) {
+                for (let i = 82; i <= 93; i++) {
+                  res.data.forEach(function (item, index) {
+                    if (item.id == i) {
+                      myloop.push(item);
+                      myloop2.push(item);
+                    }
+                  })
+                }
+                for (let i = 94; i <= valend[0].id; i++) {
+                  res.data.forEach(function (item, index) {
+                    if (item.id == i) {
+                      myloop.push(item);
+                    }
+                  })
+                }
+                setdirecpass(myloop);
+              }
+            }
+          }
+          //silom ไป mrt S2
+          else if (valstart[0].id >= 48 && valstart[0].id <= 55 && valstart[0].type == "silom") {
+            if (valend[0].id <= 86 && valend[0].id >= 70 && valstart[0].type == "silom") {
+              for (let i = 86; i >= valend[0].id; i--) {
+                res.data.forEach(function (item, index) {
+                  if (item.id == i) {
+                    myloop.push(item);
+                    myloop2.push(item);
+                  }
+                })
+              }
+              setdirecpass(myloop)
+            } else if (valend[0].id >= 62 && valend[0].id <= 69 && valstart[0].type == "silom") {
+              for (let i = 86; i <= 93; i++) {
+                res.data.forEach(function (item, index) {
+                  if (item.id == i) {
+                    myloop.push(item);
+                    myloop2.push(item);
+                  }
+                })
+              }
+              for (let i = 62; i <= valend[0].id; i++) {
+                res.data.forEach(function (item, index) {
+                  if (item.id == i) {
+                    myloop.push(item);
+                    myloop2.push(item);
+                  }
+                })
+              }
+              setdirecpass(myloop)
+            } else if (valend[0].id <= 99 && valend[0].id >= 86 && valstart[0].type == "silom") {
+              for (let i = 86; i <= valend[0].id; i++) {
+                res.data.forEach(function (item, index) {
+                  if (item.id == i) {
+                    myloop.push(item);
+                    myloop2.push(item);
+                  }
+                })
+              }
+              setdirecpass(myloop)
+            }
+          }
+        });
+        // คิดค่าโดยสาร
+        Axios.get("http://localhost:3000/costs").then((res) => {
+          let getCost = res.data.forEach(function (item) {
+            if (myloop1.length == item.num_stat && checkSTA == "BTS") {
+              setCost3(item.cost)
+            }
+            else if (myloop1.length > 9 && checkSTA == "BTS") {
+              setCost3(44)
+            }
+          })
+          let getCost1 = res.data.forEach(function (item) {
+            if (myloop2.length == item.num_stat && checkSTAEnd == "MRT") {
+              setCost4(item.cost_mrt);
+            } else if (myloop2.length > 13 && checkSTAEnd == "MRT") {
+              setCost4(42);
+            }
+          })
+        });
+        setCheck(1);
       }).catch((error) => {
         console.log("Api call error");
         alert(error.message);
@@ -497,13 +731,13 @@ const DirectionScreen = ({ navigation, route }) => {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView>
         <View style={styles.screen}>
           <View style={styles.screentop}>
+          <ScrollView>
             <Ionicons name="bus" size={24} color={"black"} />
             <FlatList data={direcpass} renderItem={renderCategories} numColumns={1} />
             <Ionicons name="bus" size={24} color={"black"} />
+            </ScrollView>
           </View>
           <Text style={styles.txt}>ราคาค่าโดยสาร :
             <Text style={styles.text_cost}> {cost} ฿</Text></Text>
@@ -513,10 +747,7 @@ const DirectionScreen = ({ navigation, route }) => {
             onPress={() => {
               navigation.navigate("Travel", { prev: "pathBts", Endstation: end });
             }} />
-
         </View>
-      </ScrollView>
-    </SafeAreaView>
   )
 }
 
@@ -528,10 +759,12 @@ const styles = StyleSheet.create({
   },
   screen: {
     flex: 1,
+    // margin: "5%",
     alignItems: "center",
     backgroundColor: "#DCE2F0",
     padding: 10,
-    marginVertical: "5%",
+    paddingTop: "15%",
+    // marginVertical: "5%",
   },
   station: {
     marginBottom: 5,
@@ -539,6 +772,8 @@ const styles = StyleSheet.create({
   },
   screentop: {
     width: "80%",
+    minHeight: "20%",
+    maxHeight: "50%",
     backgroundColor: "white",
     borderRadius: 10,
     padding: 10,
