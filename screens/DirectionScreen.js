@@ -742,7 +742,7 @@ const DirectionScreen = ({ navigation, route }) => {
           <Text style={styles.txt}>ราคาค่าโดยสาร :
             <Text style={styles.text_cost}> {cost} ฿</Text></Text>
           <Button
-            title="สถานที่ท่องเที่ยว"
+            title="สถานที่ท่องเที่ยวบริเวณใกล้เคียง"
             color="#50586C"
             onPress={() => {
               navigation.navigate("Travel", { prev: "pathBts", Endstation: end });
