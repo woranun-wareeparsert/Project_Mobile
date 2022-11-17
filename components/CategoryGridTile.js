@@ -2,6 +2,7 @@ import React from "react";
 import { TouchableOpacity, View, Text, StyleSheet, ImageBackground, Image, } from "react-native";
 
 const CategoryGridTile = (props) => {
+  // console.log(props.image)
   return (
     <View style={styles.container}>
       <TouchableOpacity
@@ -10,10 +11,10 @@ const CategoryGridTile = (props) => {
           props.onPress();
         }}>
         <View style={styles.img}>
-          <ImageBackground
-            source={require("../assets/img_mobile/1_1.png")}
+          <Image
+            source={require("../assets/" + props.image)}
             style={styles.bgImage}>
-          </ImageBackground>
+          </Image>
         </View>
       </TouchableOpacity>
       <Text style={styles.title} numberOfLines={2}>
@@ -28,11 +29,8 @@ const styles = StyleSheet.create({
     flex: 1,
     margin: 10,
     height: 220,
-    // backgroundColor: "white",
   },
   gridItem: {
-    // flex: 1,
-    // margin: 15,
     height: 140,
   },
   img: {
@@ -45,7 +43,6 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 10,
     elevation: 3,
-    padding: 5,
     justifyContent: "flex-end",
     alignItems: "flex-end",
   },
@@ -58,7 +55,7 @@ const styles = StyleSheet.create({
   bgImage: {
     width: "100%",
     height: "100%",
-    borderRadius: 30,
+    borderRadius: 10,
     justifyContent: "flex-end",
   },
 });
