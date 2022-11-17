@@ -23,13 +23,20 @@ const TravelScreen = ({ navigation, route }) => {
     const [direcpass, setdirecpass] = React.useState([]);
     const [check, setCheck] = React.useState(0);
 
+    //more images
     var IdImage = 0;
     const [allimage, setallimage] = React.useState([]);
+
+    //description
+    const [title, settitle] = React.useState([]);
+    const [description, setdescription] = React.useState([]);
 
     //open-close Modal
     const [visible, setVisible] = React.useState(false);
     const showModal = (item) => {
         IdImage = item.item.id;
+        setdescription(item.item.desc)
+        settitle(item.item.tname)
         setVisible(true);
         let myloop1 = [];
         Axios.get("http://localhost:3000/img_travel").then((res) => {
@@ -69,6 +76,7 @@ const TravelScreen = ({ navigation, route }) => {
             <CategoryGridTile
                 style={styles.text}
                 title={item.item.tname}
+                image={item.item.img}
                 color="#50586C"
                 onPress={() => showModal(item)}
             />
@@ -84,8 +92,7 @@ const TravelScreen = ({ navigation, route }) => {
                             <View style={styles.modalView}>
                                 <View style={styles.showimage}>
                                     <ScrollView
-                                        horizontal={true}
-                                        style={styles.contentContainer}>
+                                        horizontal={true}>
                                         <FlatList
                                             horizontal={true}
                                             showsHorizontalScrollIndicator={false}
@@ -98,8 +105,8 @@ const TravelScreen = ({ navigation, route }) => {
                                                     source={require("../assets/" + item)}
                                                     key={index}
                                                     style={{
-                                                        width: 260,
-                                                        height: 300,
+                                                        width: 200,
+                                                        height: 200,
                                                         // borderWidth: 2,
                                                         resizeMode: 'cover',
                                                         resizeMode: 'contain',
@@ -108,8 +115,8 @@ const TravelScreen = ({ navigation, route }) => {
                                             )} />
                                     </ScrollView>
                                 </View>
-
-                                <Text style={styles.modalText}>Hello World!</Text>
+                                <Text style={styles.modalTextTitle}>{title}</Text>
+                                <Text style={styles.modalText}>{description}</Text>
                                 <Pressable
                                     style={[styles.button, styles.buttonClose]}
                                     onPress={hideModal}
@@ -167,13 +174,11 @@ const styles = StyleSheet.create({
     },
     showimage: {
         width: "100%",
-
+        // backgroundColor: "green",
     },
     task: {
         padding: 10,
     },
-
-
     centeredView: {
         flex: 1,
         justifyContent: "center",
@@ -213,10 +218,17 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         textAlign: "center"
     },
+    modalTextTitle: {
+        marginVertical:10,
+        textAlign: "center",
+        fontWeight: "bold",
+        fontSize: 15,
+    },
     modalText: {
         marginBottom: 15,
         textAlign: "center"
-    }
+    },
+    
 
 });
 
