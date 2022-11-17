@@ -239,22 +239,7 @@ const SearchScreen = ({ navigation, route }) => {
         <SelectList setSelected={setSelectedend} data={Locations} onSelect={() => console.log(selectedend)} placeholder="เลือกสถานีปลายทาง" />
 
         <View style={styles.btn}>
-          <Button
-            title="ค้นหา"
-            color="#50586C"
-            onPress={() => {
-              // if (selectedstart == "" || selectedend == "") {
-              //   alert("กรุณาระบุสถานี")
-              // }
-              // else {
-                // console.log(selectedstart)
-                // console.log(selectedend)
-                console.log(checkstations)
-                console.log(checkstationsend)
-              navigation.navigate("Direction", { prev: "pathBts", start: selectedstart, end: selectedend, checkSTA: checkStart, checkSTAEnd: checkEnd })
-              // }
-            }} />
-          <View style={styles.screenbtn}>
+        <View style={styles.screenbtn}>
             <Button
               title="BTS"
               color="#50586C"
@@ -281,6 +266,22 @@ const SearchScreen = ({ navigation, route }) => {
               }} />
           </View>
         </View>
+        <Button
+            title="ค้นหา"
+            color="#50586C"
+            margin={10}
+            onPress={() => {
+              // if (selectedstart == "" || selectedend == "") {
+              //   alert("กรุณาระบุสถานี")
+              // }
+              // else {
+                // console.log(selectedstart)
+                // console.log(selectedend)
+                console.log(checkstations)
+                console.log(checkstationsend)
+              navigation.navigate("Direction", { prev: "pathBts", start: selectedstart, end: selectedend, checkSTA: checkStart, checkSTAEnd: checkEnd })
+              // }
+            }} />
       </View>
     </View>
     </ScrollView>
@@ -296,29 +297,23 @@ const styles = StyleSheet.create({
   },
   screen: {
     flex: 1,
-    marginBottom: "10%",
-    // justifyContent: "center",
+    marginVertical: "10%",
     alignItems: "center",
     backgroundColor: "#DCE2F0",
   },
   screenbtn: {
-    // width: "80%",
     flexDirection: "row",
     flexWrap: "wrap",
-    marginTop: "10%",
-    // padding: 10,
     justifyContent: "space-around",
-    // alignItems: "center",
   },
   space: {
-    width: 30, // or whatever size you need
+    width: 30,
     height: 30,
   },
   inscreen: {
     height: "50%",
     minWidth: "65%",
     maxWidth: "90%",
-    // backgroundColor: "white",
   },
   text: {
     marginVertical: 20,
